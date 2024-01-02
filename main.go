@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/agusbasari29/xjx-code/database"
@@ -17,8 +16,11 @@ func main() {
 	defer database.CloseDatabaseConnection(db)
 	db.AutoMigrate()
 	g := gin.Default()
-	g.GET("/seeder", func(ctx *gin.Context) {
-		fmt.Println("Test seeders function")
+	gin.SetMode(gin.ReleaseMode)
+	g.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Test init project",
+		})
 	})
 	g.Run(os.Getenv("SERVER_PORT"))
 }
