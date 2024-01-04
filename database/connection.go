@@ -9,8 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetupDBConnection() *gorm.DB {
+func SetupDBConnection(dbName string) *gorm.DB {
 	dbConfig := config.DbConfig()
+	if dbName != "" {
+		dbConfig.DBName = dbName
+	}
 	// dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", //postgres
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", //mysql
 		dbConfig.Username,

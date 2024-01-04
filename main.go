@@ -4,17 +4,18 @@ import (
 	"os"
 
 	"github.com/agusbasari29/xjx-code/database"
+	"github.com/agusbasari29/xjx-code/entity"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 var (
-	db *gorm.DB = database.SetupDBConnection()
+	db *gorm.DB = database.SetupDBConnection("")
 )
 
 func main() {
 	defer database.CloseDatabaseConnection(db)
-	db.AutoMigrate()
+	db.AutoMigrate(&entity.Users{})
 	g := gin.Default()
 	gin.SetMode(gin.ReleaseMode)
 	g.GET("/", func(ctx *gin.Context) {
