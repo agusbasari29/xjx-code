@@ -1,7 +1,9 @@
 package service
 
 import (
+	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/agusbasari29/xjx-code/entity"
@@ -11,6 +13,7 @@ import (
 
 type JWTService interface {
 	GenerateToken(user entity.Users) response.ResponseCredential
+	ValidateToken(token string) (*jwt.Token, error)
 }
 
 type jwtService struct {
@@ -61,4 +64,14 @@ func (j *jwtService) GenerateToken(user entity.Users) response.ResponseCredentia
 	credential.ExpiresAt = claim.ExpiresAt
 
 	return credential
+}
+
+func (j *jwtService) ValidateToken(token string) (*jwt.Token, error) {
+	jwtString := strings.Split(token, "Bearer ")[1]
+	return jwt.Parse(jwtString, func(t_ *jwt.Token) (interface{}, error) {
+		if _, ok := t_.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method %v", t_.Header["alg"])
+		}
+		return []byte(j.secret), nil
+	})
 }
