@@ -11,6 +11,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserService interface {
+	CreateUser(req request.RequestAuthLogin) (entity.Users, error)
+	VerifyCredential(username string, password string) interface{}
+}
+
 type userService struct {
 	repository repository.UserRepository
 }
@@ -37,4 +42,21 @@ func (s *userService) CreateUser(req request.RequestAuthLogin) (entity.Users, er
 		return user, err
 	}
 	return newUser, err
+}
+
+func (s *userService) VerifyCredential(username string, password string) interface{} {
+	res := s.repository.GetByUsername(username)
+	if v, ok := res.(entity.Users); ok {
+		comparedPassword := comparePassword(v.Password, password)
+		if v.Username == username && comparedPassword {
+			return res
+		}
+		return false
+	}
+	return false
+}
+
+func comparePassword(hashedPwd string, plainPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(plainPassword))
+	return err == nil
 }

@@ -7,6 +7,7 @@ import (
 
 type UserRepository interface {
 	InsertUser(user entity.Users) (entity.Users, error)
+	GetByUsername(username string) interface{}
 }
 
 type userRepository struct {
@@ -23,4 +24,13 @@ func (r *userRepository) InsertUser(user entity.Users) (entity.Users, error) {
 		return user, err
 	}
 	return user, nil
+}
+
+func (r *userRepository) GetByUsername(username string) interface{} {
+	user := entity.Users{}
+	res := r.db.Raw("SELECT * FROM users WHERE username=@Username", map[string]interface{}{"Username": username}).Take(&user)
+	if res.Error == nil {
+		return user
+	}
+	return nil
 }
