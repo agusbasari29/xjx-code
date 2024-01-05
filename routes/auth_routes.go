@@ -22,7 +22,7 @@ func (r AuthRoutes) Route() []helper.Route {
 		{
 			Method:  "POST",
 			Path:    "/login",
-			Handler: []gin.HandlerFunc{authHandler.Login()},
+			Handler: []gin.HandlerFunc{authHandler.Login},
 		},
 	}
 }
