@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthorizeJWT(jwt service.JWTService) gin.HandlerFunc {
+func AuthorizeJWT(service service.JWTService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -18,12 +18,12 @@ func AuthorizeJWT(jwt service.JWTService) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
-		token, err := jwt.ValidateToken(authHeader)
+		token, err := service.ValidateToken(authHeader)
 		if token.Valid {
 			// claim := token.Claims(jwt.MapClaims)
 		} else {
 			log.Println(err)
-			response := helper.ResponseFormatter(http.StatusUnauthorized, "error", errors.New("token is invalid."), nil)
+			response := helper.ResponseFormatter(http.StatusUnauthorized, "error", errors.New("token is invalid"), nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		}
 	}
